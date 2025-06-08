@@ -35,10 +35,8 @@ func (m model) View() string {
 }
 
 func main() {
-	// Initialize the model
-	initialModel := model{
-		message: "Hello, Bubble Tea!",
-	}
+	// Initialize the counter model
+	initialModel := NewCounterModel()
 
 	// Create a new program
 	p := tea.NewProgram(initialModel)
