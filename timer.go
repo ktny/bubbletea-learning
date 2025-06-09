@@ -30,12 +30,7 @@ type timerModel struct {
 
 // タイマーモデルのコンストラクタ
 func NewTimerModel() timerModel {
-	return timerModel{
-		duration:   0,
-		state:      stopped,
-		startTime:  time.Time{},
-		pausedTime: 0,
-	}
+	return timerModel{}.handleReset()
 }
 
 // Init - 初期化時のコマンド
@@ -94,9 +89,9 @@ func (m timerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		// Start/Stop処理の判定
-		isStartStop := msg.Type == tea.KeySpace || 
+		isStartStop := msg.Type == tea.KeySpace ||
 			(msg.Type == tea.KeyRunes && string(msg.Runes) == "s")
-		
+
 		if isStartStop {
 			return m.handleStartStop()
 		}
@@ -115,11 +110,7 @@ func (m timerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case tickMsg:
-		if m.state == running {
-			// 現在時刻から開始時刻を引いて、一時停止時の累積時間を加算
-			m.duration = time.Since(m.startTime) + m.pausedTime
-			return m, tickCmd() // 次のtickを予約
-		}
+		return m.handleTick()
 	}
 
 	return m, nil
