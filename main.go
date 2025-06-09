@@ -35,8 +35,24 @@ func (m model) View() string {
 }
 
 func main() {
-	// Initialize the counter model
-	initialModel := NewCounterModel()
+	// コマンドライン引数で起動するアプリを選択
+	var app string
+	if len(os.Args) > 1 {
+		app = os.Args[1]
+	}
+
+	var initialModel tea.Model
+	switch app {
+	case "timer":
+		initialModel = NewTimerModel()
+	case "counter":
+		initialModel = NewCounterModel()
+	default:
+		fmt.Println("使用方法:")
+		fmt.Println("  go run . counter  # カウンターアプリ")
+		fmt.Println("  go run . timer    # タイマーアプリ")
+		os.Exit(0)
+	}
 
 	// Create a new program
 	p := tea.NewProgram(initialModel)

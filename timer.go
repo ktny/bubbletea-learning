@@ -22,10 +22,10 @@ const (
 
 // タイマーモデル
 type timerModel struct {
-	duration    time.Duration // 経過時間
-	state       timerState    // タイマーの状態
-	startTime   time.Time     // 開始時刻
-	pausedTime  time.Duration // 一時停止時の累積時間
+	duration   time.Duration // 経過時間
+	state      timerState    // タイマーの状態
+	startTime  time.Time     // 開始時刻
+	pausedTime time.Duration // 一時停止時の累積時間
 }
 
 // タイマーモデルのコンストラクタ
@@ -91,18 +91,18 @@ func (m timerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.startTime = time.Now()
 					return m, tickCmd()
 				}
-				case "r":
-					// Reset
-					m.state = stopped
-					m.duration = 0
-					m.pausedTime = 0
-					m.startTime = time.Time{}
-					return m, nil
-				case "q":
-					return m, tea.Quit
-				}
-			case tea.KeyCtrlC:
+			case "r":
+				// Reset
+				m.state = stopped
+				m.duration = 0
+				m.pausedTime = 0
+				m.startTime = time.Time{}
+				return m, nil
+			case "q":
 				return m, tea.Quit
+			}
+		case tea.KeyCtrlC:
+			return m, tea.Quit
 		}
 
 	case tickMsg:
