@@ -40,7 +40,7 @@ func (m timerModel) Init() tea.Cmd {
 
 // tick コマンドを生成する関数
 func tickCmd() tea.Cmd {
-	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
+	return tea.Tick(time.Millisecond*100, func(t time.Time) tea.Msg {
 		return tickMsg(t)
 	})
 }
@@ -116,11 +116,12 @@ func (m timerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// formatDuration - MM:SS形式で時間をフォーマット
+// formatDuration - MM:SS.ms形式で時間をフォーマット
 func formatDuration(d time.Duration) string {
 	minutes := int(d.Minutes())
 	seconds := int(d.Seconds()) % 60
-	return fmt.Sprintf("%02d:%02d", minutes, seconds)
+	milliseconds := int(d.Milliseconds()) % 1000 / 100 // 1桁のミリ秒
+	return fmt.Sprintf("%02d:%02d.%d", minutes, seconds, milliseconds)
 }
 
 // View - UIの描画
@@ -135,7 +136,7 @@ func (m timerModel) View() string {
 		Bold(true).
 		Foreground(lipgloss.Color("10")). // 緑
 		Align(lipgloss.Center).
-		Width(10)
+		Width(12)
 
 	statusStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("8")). // グレー

@@ -206,14 +206,19 @@ func TestFormatDuration(t *testing.T) {
 		duration time.Duration
 		expected string
 	}{
-		{"0秒", 0, "00:00"},
-		{"30秒", time.Second * 30, "00:30"},
-		{"1分", time.Minute, "01:00"},
-		{"1分30秒", time.Minute + time.Second*30, "01:30"},
-		{"10分5秒", time.Minute*10 + time.Second*5, "10:05"},
-		{"59分59秒", time.Minute*59 + time.Second*59, "59:59"},
-		{"1時間", time.Hour, "60:00"},
-		{"1時間30分", time.Hour + time.Minute*30, "90:00"},
+		{"0秒", 0, "00:00.0"},
+		{"30秒", time.Second * 30, "00:30.0"},
+		{"1分", time.Minute, "01:00.0"},
+		{"1分30秒", time.Minute + time.Second*30, "01:30.0"},
+		{"10分5秒", time.Minute*10 + time.Second*5, "10:05.0"},
+		{"59分59秒", time.Minute*59 + time.Second*59, "59:59.0"},
+		{"1時間", time.Hour, "60:00.0"},
+		{"1時間30分", time.Hour + time.Minute*30, "90:00.0"},
+		{"100ミリ秒", time.Millisecond * 100, "00:00.1"},
+		{"500ミリ秒", time.Millisecond * 500, "00:00.5"},
+		{"900ミリ秒", time.Millisecond * 900, "00:00.9"},
+		{"1秒100ミリ秒", time.Second + time.Millisecond*100, "00:01.1"},
+		{"5秒500ミリ秒", time.Second*5 + time.Millisecond*500, "00:05.5"},
 	}
 
 	for _, tt := range tests {
@@ -237,7 +242,7 @@ func TestTimerModelView(t *testing.T) {
 		}
 
 		// ビューに時間が正しくフォーマットされて含まれているか確認
-		expectedTime := "05:30"
+		expectedTime := "05:30.0"
 		if !contains(view, expectedTime) {
 			t.Errorf("ビューに時間 %s が含まれているべき", expectedTime)
 		}
