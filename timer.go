@@ -50,54 +50,63 @@ func tickCmd() tea.Cmd {
 	})
 }
 
+// handleStartStop - Start/Stop トグル処理
+func (m timerModel) handleStartStop() (timerModel, tea.Cmd) {
+	switch m.state {
+	case stopped:
+		m.state = running
+		m.startTime = time.Now()
+		m.pausedTime = 0
+		return m, tickCmd()
+	case running:
+		m.state = paused
+		m.pausedTime = m.duration
+		return m, nil
+	case paused:
+		m.state = running
+		m.startTime = time.Now()
+		return m, tickCmd()
+	}
+	return m, nil
+}
+
+// handleReset - リセット処理
+func (m timerModel) handleReset() timerModel {
+	m.state = stopped
+	m.duration = 0
+	m.pausedTime = 0
+	m.startTime = time.Time{}
+	return m
+}
+
+// handleTick - tick メッセージ処理
+func (m timerModel) handleTick() (tea.Model, tea.Cmd) {
+	if m.state == running {
+		// 現在時刻から開始時刻を引いて、一時停止時の累積時間を加算
+		m.duration = time.Since(m.startTime) + m.pausedTime
+		return m, tickCmd() // 次のtickを予約
+	}
+	return m, nil
+}
+
 // Update - メッセージ処理
 func (m timerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		// Start/Stop処理の判定
+		isStartStop := msg.Type == tea.KeySpace || 
+			(msg.Type == tea.KeyRunes && string(msg.Runes) == "s")
+		
+		if isStartStop {
+			return m.handleStartStop()
+		}
+
+		// その他のキー処理
 		switch msg.Type {
-		case tea.KeySpace:
-			// Start/Stop トグル
-			switch m.state {
-			case stopped:
-				m.state = running
-				m.startTime = time.Now()
-				m.pausedTime = 0
-				return m, tickCmd()
-			case running:
-				m.state = paused
-				m.pausedTime = m.duration
-				return m, nil
-			case paused:
-				m.state = running
-				m.startTime = time.Now()
-				return m, tickCmd()
-			}
 		case tea.KeyRunes:
 			switch string(msg.Runes) {
-			case "s":
-				// Start/Stop トグル
-				switch m.state {
-				case stopped:
-					m.state = running
-					m.startTime = time.Now()
-					m.pausedTime = 0
-					return m, tickCmd()
-				case running:
-					m.state = paused
-					m.pausedTime = m.duration
-					return m, nil
-				case paused:
-					m.state = running
-					m.startTime = time.Now()
-					return m, tickCmd()
-				}
 			case "r":
-				// Reset
-				m.state = stopped
-				m.duration = 0
-				m.pausedTime = 0
-				m.startTime = time.Time{}
-				return m, nil
+				return m.handleReset(), nil
 			case "q":
 				return m, tea.Quit
 			}
