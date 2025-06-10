@@ -47,10 +47,13 @@ func main() {
 		initialModel = NewTimerModel()
 	case "counter":
 		initialModel = NewCounterModel()
+	case "todo":
+		initialModel = NewTodoModel()
 	default:
 		fmt.Println("使用方法:")
 		fmt.Println("  go run . counter  # カウンターアプリ")
 		fmt.Println("  go run . timer    # タイマーアプリ")
+		fmt.Println("  go run . todo     # TODOリストアプリ")
 		os.Exit(0)
 	}
 
