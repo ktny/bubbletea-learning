@@ -1,93 +1,76 @@
-# Bubble Tea Learning 🫧
+# 🫧 Bubble Tea Learning Journey
 
-Bubble TeaフレームワークとGo言語を段階的に学習するためのプロジェクトです。
+段階的にBubble TeaフレームワークとGo言語を学習するためのプロジェクトです。基礎から上級まで9つのissueを通じて実践的に学習します。
 
-## 概要
+## 📚 学習進捗
 
-このプロジェクトは、[Bubble Tea](https://github.com/charmbracelet/bubbletea)を使ったターミナルUIアプリケーション開発を基礎から学ぶことを目的としています。段階的なissueを通じて、シンプルなHello Worldから複雑なレイアウトまで、実践的に学習できます。
+### ✅ 完了済み
+- **Issue #2**: Hello Worldアプリケーション - Bubble TeaのMVUアーキテクチャ基礎
+- **Issue #3**: ユーザー入力 - キーボードイベント処理とTDD実践
+- **Issue #4**: スタイリング - Lip Glossによる条件付きスタイリング
+- **Issue #5**: コマンドとメッセージ - 非同期処理とタイマー実装
+- **Issue #6**: リスト表示 - 選択可能なTODOリストとビューポート機能
 
-## 必要環境
+### 🚧 進行中
+次に取り組む予定のissue
 
-- Go 1.23.0以上
-- ターミナル環境
+### 📋 今後の学習
+- **Issue #7**: テキスト入力 - Bubblesライブラリを使ったフォーム実装
+- **Issue #8**: API連携 - HTTPリクエストとプログレス表示
+- **Issue #9**: 複雑なレイアウト - 分割画面とタブシステム
 
-## セットアップ
-
-```bash
-# リポジトリのクローン
-git clone https://github.com/ktny/bubbletea-learning.git
-cd bubbletea-learning
-
-# 依存関係のインストール
-go mod download
-```
-
-## 実行方法
+## 🚀 アプリケーション実行
 
 ```bash
-# Hello Worldアプリケーションの実行
-go run main.go
+# カウンターアプリ（基本的なキーボード操作）
+go run . counter
+
+# タイマーアプリ（非同期処理とミリ秒精度）
+go run . timer
+
+# TODOリストアプリ（リスト操作とビューポート）
+go run . todo
 ```
 
-## 学習計画
+## 🧪 テスト実行
 
-### 🟢 基礎編
-- [x] **#2** [Hello World - 最初のBubble Teaアプリケーション](https://github.com/ktny/bubbletea-learning/issues/2)
-  - Model-View-Updateパターンの理解
-  - 基本的なアプリケーション構造
-- [ ] **#3** [ユーザー入力 - キーボードイベントの処理](https://github.com/ktny/bubbletea-learning/issues/3)
-  - キーボード入力の処理
-  - 状態管理の基礎
-- [ ] **#4** [スタイリング - Lip Glossでターミナルを彩る](https://github.com/ktny/bubbletea-learning/issues/4)
-  - Lip Glossを使ったスタイリング
-  - 色、枠線、レイアウトの適用
+```bash
+# 全てのテストを実行
+go test -v ./...
 
-### 🟡 中級編
-- [ ] **#5** [コマンドとメッセージ - 非同期処理の実装](https://github.com/ktny/bubbletea-learning/issues/5)
-  - tea.Cmdを使った非同期処理
-  - カスタムメッセージの定義
-- [ ] **#6** [リスト表示 - 選択可能なメニューの作成](https://github.com/ktny/bubbletea-learning/issues/6)
-  - 選択可能なリストUI
-  - スクロールとカーソル管理
-- [ ] **#7** [テキスト入力 - フォームの実装](https://github.com/ktny/bubbletea-learning/issues/7)
-  - Bubblesライブラリの活用
-  - フォーム入力とバリデーション
-
-### 🔴 上級編
-- [ ] **#8** [API連携 - HTTPリクエストとプログレス表示](https://github.com/ktny/bubbletea-learning/issues/8)
-  - 外部APIとの連携
-  - プログレス表示の実装
-- [ ] **#9** [複雑なレイアウト - 分割画面とタブシステム](https://github.com/ktny/bubbletea-learning/issues/9)
-  - 複雑なレイアウトの構築
-  - 複数ビューの管理
-
-## プロジェクト構造
-
-```
-.
-├── README.md        # このファイル
-├── go.mod          # Goモジュール定義
-├── go.sum          # 依存関係のチェックサム
-└── main.go         # メインアプリケーション
+# カバレッジ付きでテスト実行
+go test -cover ./...
 ```
 
-## 開発方針
+## 🏗️ アーキテクチャ
 
-- **TDD（テスト駆動開発）**: 各機能の実装前にテストを作成
-- **段階的学習**: 基礎から上級まで順番に学習
-- **実践的**: 実際に動くアプリケーションを作成
+### Model-View-Update (MVU)パターン
+```go
+type Model interface {
+    Init() Cmd           // 初期化処理
+    Update(Msg) (Model, Cmd)  // イベント処理
+    View() string        // UI描画
+}
+```
 
-## 参考リソース
+### 学習した技術要素
+- **基礎**: MVUアーキテクチャ、インターフェース実装
+- **イベント処理**: tea.KeyMsg、型アサーション
+- **スタイリング**: Lip Gloss、条件付きスタイル
+- **非同期処理**: tea.Cmd、tea.Tick、カスタムメッセージ
+- **リスト管理**: ビューポート、スクロール、カーソル移動
+- **TDD**: テスト駆動開発、サブテスト構造
 
-- [Bubble Tea 公式ドキュメント](https://github.com/charmbracelet/bubbletea)
-- [Bubble Tea チュートリアル](https://github.com/charmbracelet/bubbletea/tree/master/tutorials)
-- [Lip Gloss スタイリング](https://github.com/charmbracelet/lipgloss)
-- [Bubbles コンポーネント](https://github.com/charmbracelet/bubbles)
+## 📖 ドキュメント
 
-## ライセンス
+各実装の詳細な学習内容は `CLAUDE.md` を参照してください。
 
-このプロジェクトは学習目的で作成されています。
+## 🛠️ 開発環境
+
+- Go 1.21+
+- Bubble Tea v0.27+
+- Lip Gloss v0.9+
 
 ---
 
-💡 **改善提案**: 各issueを完了するごとに、学んだことをこのREADMEに追記していくと、学習の振り返りに役立ちます。
+**学習目標**: 実用的なターミナルUIアプリケーションの構築スキルを段階的に習得
