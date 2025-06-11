@@ -49,11 +49,14 @@ func main() {
 		initialModel = NewCounterModel()
 	case "todo":
 		initialModel = NewTodoModel()
+	case "form":
+		initialModel = NewFormModel()
 	default:
 		fmt.Println("使用方法:")
 		fmt.Println("  go run . counter  # カウンターアプリ")
 		fmt.Println("  go run . timer    # タイマーアプリ")
 		fmt.Println("  go run . todo     # TODOリストアプリ")
+		fmt.Println("  go run . form     # フォームアプリ")
 		os.Exit(0)
 	}
 
