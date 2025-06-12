@@ -10,10 +10,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # アプリケーションの実行
-go run main.go
+go run . <app_name>
+
+# 利用可能なアプリ
+go run . counter  # カウンターアプリ
+go run . timer    # タイマーアプリ  
+go run . todo     # TODOリストアプリ
+go run . form     # フォームアプリ
+go run . github   # GitHub APIアプリ
 
 # 依存関係のダウンロード
 go mod download
+
+# テストの実行
+go test -v ./...
 
 # Go標準のフォーマット
 go fmt ./...
@@ -48,8 +58,29 @@ go build -o bubbletea-learning
   - 枠線、色分け、レイアウト制御
   - ターミナルUI設計原則の理解
 
+- **Issue #5**: 非同期処理 - タイマーアプリケーション（timer.go, timer_test.go）
+  - tea.Tickによる定期実行
+  - 時間計測とミリ秒精度表示
+  - 開始/停止/リセット機能の実装
+
+- **Issue #6**: リスト管理 - TODOアプリケーション（todo.go, todo_test.go）
+  - ビューポートによるスクロール制御
+  - カーソル移動と項目選択
+  - 大量データの効率的な表示
+
+- **Issue #7**: コンポーネント活用 - フォームアプリケーション（form.go, form_test.go）
+  - Bubblesライブラリのtextinput使用
+  - フォーカス管理とフィールド間移動
+  - バリデーションとエラーハンドリング
+
+- **Issue #8**: HTTP API統合 - GitHub検索アプリケーション（github.go, github_test.go）
+  - Bubblesライブラリのspinner使用
+  - 非同期HTTP通信とAPI統合
+  - エラーハンドリングとリトライ機能
+  - JSON パースと構造化データ表示
+
 ### 次のステップ
-Issue #5以降の中級編に進む準備完了
+Issue #9の上級編に進む準備完了
 
 ## 開発方針
 
@@ -117,6 +148,90 @@ style := lipgloss.NewStyle().
 - 内容と見た目の分離
 - コンポーネント別スタイル定義
 - 一貫性のあるカラーパレット
+
+### Issue #5: 非同期処理とタイマー
+**tea.Tickの活用**
+```go
+// 定期実行の設定
+tea.Tick(100*time.Millisecond, func(t time.Time) tea.Msg {
+    return tickMsg{time: t}
+})
+```
+
+**時間の計測と表示**
+- time.Durationの操作
+- ミリ秒精度での時間表示
+- formatDuration関数による可読性向上
+
+**状態機械の実装**
+- 停止→実行中→一時停止のサイクル
+- 状態に応じたコマンド制御
+
+### Issue #6: ビューポートとリスト管理
+**仮想スクロールの概念**
+```go
+// ビューポート調整
+if m.cursor >= m.viewport+m.height {
+    m.viewport = m.cursor - m.height + 1
+}
+```
+
+**カーソル管理**
+- 境界チェックによる安全な移動
+- キーボードナビゲーション（↑↓、j/k）
+- 選択状態の視覚的フィードバック
+
+### Issue #7: Bubblesコンポーネント統合
+**textinputの使用**
+```go
+ti := textinput.New()
+ti.Placeholder = "例: 山田太郎"
+ti.Focus()
+ti.CharLimit = 50
+```
+
+**フォーカス管理**
+- 複数フィールド間の移動
+- Tab/Shift+Tab での順次移動
+- フィールド状態に応じたスタイル変更
+
+**バリデーション設計**
+- 入力チェックの分離
+- エラーメッセージの表示制御
+- 正規表現によるメール検証
+
+### Issue #8: HTTP API統合と非同期処理
+**tea.Cmd での HTTP通信**
+```go
+func fetchGitHubUser(username string) tea.Cmd {
+    return func() tea.Msg {
+        // HTTP通信処理
+        return apiResponse{user: &user, err: nil}
+    }
+}
+```
+
+**状態管理の拡張**
+- 入力→ローディング→成功/エラーの状態遷移
+- リトライ機能の実装
+- 状態に応じたUI切り替え
+
+**spinnerコンポーネント**
+```go
+sp := spinner.New()
+sp.Spinner = spinner.Dot
+sp.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("14"))
+```
+
+**エラーハンドリング戦略**
+- ネットワークエラーの分類
+- HTTPステータスコード別処理
+- ユーザーフレンドリーなエラーメッセージ
+
+**JSON構造体設計**
+- GitHub API レスポンスのマッピング
+- オプショナルフィールドの条件付き表示
+- time.Time のフォーマット処理
 
 ## 注意事項
 
