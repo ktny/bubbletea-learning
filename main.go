@@ -51,12 +51,15 @@ func main() {
 		initialModel = NewTodoModel()
 	case "form":
 		initialModel = NewFormModel()
+	case "github":
+		initialModel = NewGitHubModel()
 	default:
 		fmt.Println("使用方法:")
 		fmt.Println("  go run . counter  # カウンターアプリ")
 		fmt.Println("  go run . timer    # タイマーアプリ")
 		fmt.Println("  go run . todo     # TODOリストアプリ")
 		fmt.Println("  go run . form     # フォームアプリ")
+		fmt.Println("  go run . github   # GitHub APIアプリ")
 		os.Exit(0)
 	}
 
