@@ -53,13 +53,16 @@ func main() {
 		initialModel = NewFormModel()
 	case "github":
 		initialModel = NewGitHubModel()
+	case "dashboard":
+		initialModel = NewDashboardModel()
 	default:
 		fmt.Println("使用方法:")
-		fmt.Println("  go run . counter  # カウンターアプリ")
-		fmt.Println("  go run . timer    # タイマーアプリ")
-		fmt.Println("  go run . todo     # TODOリストアプリ")
-		fmt.Println("  go run . form     # フォームアプリ")
-		fmt.Println("  go run . github   # GitHub APIアプリ")
+		fmt.Println("  go run . counter    # カウンターアプリ")
+		fmt.Println("  go run . timer      # タイマーアプリ")
+		fmt.Println("  go run . todo       # TODOリストアプリ")
+		fmt.Println("  go run . form       # フォームアプリ")
+		fmt.Println("  go run . github     # GitHub APIアプリ")
+		fmt.Println("  go run . dashboard  # 統合ダッシュボード")
 		os.Exit(0)
 	}
 
