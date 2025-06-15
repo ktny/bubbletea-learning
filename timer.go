@@ -5,7 +5,8 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"github.com/ktny/bubbletea-learning/pkg/constants"
+	"github.com/ktny/bubbletea-learning/pkg/styles"
 )
 
 // カスタムメッセージ型
@@ -40,7 +41,7 @@ func (m timerModel) Init() tea.Cmd {
 
 // tick コマンドを生成する関数
 func tickCmd() tea.Cmd {
-	return tea.Tick(time.Millisecond*100, func(t time.Time) tea.Msg {
+	return tea.Tick(constants.TickInterval, func(t time.Time) tea.Msg {
 		return tickMsg(t)
 	})
 }
@@ -126,30 +127,8 @@ func formatDuration(d time.Duration) string {
 
 // View - UIの描画
 func (m timerModel) View() string {
-	// スタイル定義
-	titleStyle := lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("12")). // 青
-		Align(lipgloss.Center)
-
-	timeStyle := lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("10")). // 緑
-		Align(lipgloss.Center).
+	timeStyle := styles.SuccessStyle.Copy().
 		Width(12)
-
-	statusStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("8")). // グレー
-		Italic(true)
-
-	helpStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("8")). // グレー
-		Italic(true)
-
-	borderStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("12")). // 青
-		Padding(1, 2)
 
 	// 状態テキスト
 	var stateText string
@@ -164,15 +143,15 @@ func (m timerModel) View() string {
 
 	content := fmt.Sprintf(
 		"%s\n\n%s\n\n%s\n\n%s",
-		titleStyle.Render("⏱️  タイマー"),
+		styles.TitleStyle.Render(constants.TimerTitle),
 		timeStyle.Render(formatDuration(m.duration)),
-		statusStyle.Render(fmt.Sprintf("状態: %s", stateText)),
-		helpStyle.Render(
+		styles.DimmedStyle.Render(fmt.Sprintf("状態: %s", stateText)),
+		styles.HelpStyle.Render(
 			"s/スペース: スタート/ストップ\n"+
 				"r: リセット\n"+
-				"q: 終了",
+				constants.QuitHelp,
 		),
 	)
 
-	return borderStyle.Render(content)
+	return styles.BorderStyle.Render(content)
 }

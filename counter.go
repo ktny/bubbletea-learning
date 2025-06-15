@@ -4,7 +4,9 @@ import (
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"github.com/ktny/bubbletea-learning/pkg/common"
+	"github.com/ktny/bubbletea-learning/pkg/constants"
+	"github.com/ktny/bubbletea-learning/pkg/styles"
 )
 
 type counterModel struct {
@@ -24,6 +26,11 @@ func (m counterModel) Init() tea.Cmd {
 func (m counterModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		// Handle common quit keys
+		if cmd := common.HandleQuitKeys(msg); cmd != nil {
+			return m, cmd
+		}
+		
 		switch msg.Type {
 		case tea.KeyUp:
 			m.count++
@@ -34,12 +41,11 @@ func (m counterModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeySpace:
 			m.count = 0
 			return m, nil
-		case tea.KeyCtrlC:
-			return m, tea.Quit
 		case tea.KeyRunes:
 			switch string(msg.Runes) {
-			case "q":
-				return m, tea.Quit
+			case "s": // Alternative space for reset
+				m.count = 0
+				return m, nil
 			}
 		}
 	}
@@ -48,36 +54,24 @@ func (m counterModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m counterModel) View() string {
 	// カウンター数値のスタイル（条件付き）
-	var countStyle lipgloss.Style
+	var countStyle = styles.CounterZeroStyle
 	if m.count > 0 {
-		countStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("10")) // 緑
+		countStyle = styles.CounterPositiveStyle
 	} else if m.count < 0 {
-		countStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("9"))  // 赤
-	} else {
-		countStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("7"))  // 白
+		countStyle = styles.CounterNegativeStyle
 	}
 
-	// ヘルプテキストのスタイル
-	helpStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("8")).  // グレー
-		Italic(true)
-
-	// アプリケーション全体の枠線スタイル
-	borderStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("12")). // 青
-		Padding(1, 2)
-
 	content := fmt.Sprintf(
-		"カウンター: %s\n\n%s",
+		"%s\n\nカウンター: %s\n\n%s",
+		styles.TitleStyle.Render(constants.CounterTitle),
 		countStyle.Render(fmt.Sprintf("%d", m.count)),
-		helpStyle.Render(
+		styles.HelpStyle.Render(
 			"↑: 増加\n"+
 			"↓: 減少\n"+
-			"スペース: リセット\n"+
-			"q または Ctrl+C: 終了",
+			"スペース/s: リセット\n"+
+			constants.QuitHelp,
 		),
 	)
 
-	return borderStyle.Render(content)
+	return styles.BorderStyle.Render(content)
 }
